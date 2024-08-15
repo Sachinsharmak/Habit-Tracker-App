@@ -1,0 +1,317 @@
+layout.html
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ title }}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+        {% block head_content %}{% endblock %}
+    </head>
+    <body>
+        <header class="header">
+            <h1 class="header__logo">
+                <a href="{{ url_for('habits.index') }}" class="header__link">Habits</a>
+            </h1>
+            {% if "add" not in request.endpoint %}
+                <a href="{{ url_for('habits.add_habit') }}" class="header__link">+ Add New</a>
+            {% endif %}
+        </header>
+        <section class="dates">
+            {% for date in date_range(selected_date) %}
+                <a  
+                    class="date__link {{ 'date__link--current' if loop.index0 == 3 else ''}}" 
+                    href="{{ url_for('habits.index', date=date) }}"
+                >
+                    <time class="date" datetime="{{ date }}">
+                        <span>{{ date.strftime("%a") }}</span>
+                        <span>{{ date.strftime("%d") }}</span>
+                    </time>
+                </a>
+            {% endfor %}
+        </section>
+        <main class="main">
+            {% block main_content %}
+            {% endblock %}
+        </main>
+    </body>
+</html>
+
+index.html
+
+{% extends "layout.html" %}
+
+{% block main_content %}
+<section class="habit-list">
+{% for habit in habits %}
+    {% set completed = habit["_id"] in completions %}
+        {% if completed %}
+            <div class="habit completed">
+                <p class="habit__name">
+                    {{ habit["name"] }}
+                </p>
+                <svg class="habit__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        {% else %}
+            <div class="habit">
+                <form method="POST" class="habit__form" action="{{ url_for('habits.complete') }}">
+                <input type="hidden" id="habitId" name="habitId" value="{{ habit['_id'] }}" />
+                <input type="hidden" id="date" name="date" value="{{ selected_date }}" />
+                <button type="submit" class="habit__button">
+                    {{ habit["name"] }}
+                </button>
+                </form>
+            </div>
+        {% endif %}
+{% endfor %}
+</section>
+{% endblock %}
+
+add_habit.html
+{% extends "layout.html" %}
+
+{% block main_content%}
+    <form class="form" method="POST">
+        <textarea class="form__input" id="habit" name="habit" rows="3" placeholder="Add a new daily habit"></textarea>
+        <button class="form__button" type="submit">Add</button>
+    </form>
+{% endblock%}
+
+
+css
+:root {
+    --primary-color: #f9dba0;
+    --secondary-color: #333;
+    --background-color: #f0f2f5;
+    --text-color: #333;
+    --header-gradient: linear-gradient(90deg, #1a1a1a 0%, #333 100%);
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    --habit-background: #fff2d8;
+    --habit-hover-background: #e9cd87;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.header,
+.main {
+    max-width: 40rem;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--header-gradient);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+    padding: 1rem 2rem;
+}
+
+.header__link {
+    text-decoration: none;
+    color: inherit;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.header__link:hover,
+.header__link:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--primary-color);
+    outline: none;
+}
+
+.header__logo {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.main {
+    padding: 1.5rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    gap: 0.75rem;
+    align-items: center; /* Center align form items */
+}
+
+.form__input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fafafa;
+    font-size: 1rem;
+    resize: none;
+    width: 100%; /* Ensure full width */
+    max-width: 25rem; /* Limit the maximum width */
+    transition: var(--transition);
+}
+
+.form__input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 5px rgba(249, 219, 160, 0.5);
+}
+
+.form__button {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+    align-self: center; /* Center button */
+    transition: var(--transition);
+}
+
+.form__button:hover,
+.form__button:focus {
+    background-color: #f7c684;
+    outline: none;
+}
+
+.form__button:active {
+    transform: scale(0.98);
+}
+
+.dates {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.date__link {
+    text-align: center;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: #fff;
+    transition: var(--transition);
+}
+
+.date__link--current {
+    background-color: var(--primary-color);
+}
+
+.date__link.hidden {
+    display: none;
+}
+
+.date__link:hover,
+.date__link:focus {
+    background-color: rgba(249, 219, 160, 0.2);
+    color: var(--primary-color);
+}
+
+.habit {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.5rem; /* 26px */
+    padding: 10px; /* Reduced padding */
+    margin-bottom: 1rem; /* Reduced margin */
+    background-color: var(--habit-background);
+    border: 3px solid var(--secondary-color); /* Use a variable for color consistency */
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.habit:not(.completed):hover {
+    background-color: var(--habit-hover-background);
+}
+
+.habit__icon {
+    width: 1em;
+    height: 1em;
+}
+
+.habit__name {
+    margin: 0;
+}
+
+.habit__form {
+    width: 100%;
+}
+
+.habit__button {
+    display: block;
+    width: 100%;
+    padding: 20px; /* Reduced padding */
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+    border: none;
+    background-color: unset;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+@media screen and (min-width: 35rem) {
+    .date__link.hidden {
+        display: inline-block;
+    }
+}
+
+@media screen and (max-width: 35rem) {
+    .date__link:nth-child(1),
+    .date__link:nth-child(2),
+    .date__link:nth-last-child(1),
+    .date__link:nth-last-child(2) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 25rem) {
+    .date__link:nth-child(1),
+    .date__link:nth-last-child(1) {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .header,
+    .main {
+        padding: 1rem;
+    }
+
+    .header__logo {
+        font-size: 1.5rem;
+    }
+
+    .form__button {
+        width: 100%;
+    }
+}
