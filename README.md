@@ -79,15 +79,6 @@ A simple habit tracker application built using Flask, where users can add daily 
 - **Add Habit:** Use the form to add a new habit with a specified date.
 - **Complete Habit:** Mark a habit as completed using the provided form.
 
-## Project Structure
-.
-├── app.py # Main Flask application
-├── requirements.txt # Python dependencies
-├── .env # Environment configuration
-├── templates
-│ ├── index.html # Homepage template
-│ └── add_habit.html # Add habit form template
-└── static # Static files (CSS, JS)
 
 ## Contributing
 
