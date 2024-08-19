@@ -31,13 +31,12 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                script {
-                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                        dockerImage.push('latest')
-                    }
+                withDockerRegistry([credentialsId: 'dockerhub-credentials-id', url: 'https://index.docker.io/v1/']) {
+                    sh 'docker push sachin8927/habit-tracker'
                 }
             }
         }
+
 
         stage('Deploy') {
             steps {
