@@ -24,7 +24,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Placeholder for test steps. Add unit tests or other checks here.
+                // Placeholder for test steps
                 echo 'Running tests...'
             }
         }
@@ -41,8 +41,9 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // Deploy the application. Here, you might use Docker Compose or other deployment tools.
+                // Placeholder for deploy steps
                 echo 'Deploying application...'
+                // Use Docker Compose or other tools to deploy
             }
         }
     }
