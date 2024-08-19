@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials-id'
-        REPO_URL = 'https://github.com/your-username/habit-tracker.git'
+        REPO_URL = 'https://github.com/Sachinsharmak/Habit-Tracker-App.git'
         IMAGE_NAME = 'sachin8927/habit-tracker'
-        DOCKER_COMPOSE_FILE = 'docker-compose.yml' // Path to Docker Compose file
+        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
     }
 
     stages {
