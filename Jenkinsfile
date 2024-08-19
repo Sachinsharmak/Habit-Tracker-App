@@ -5,7 +5,6 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials-id'
         REPO_URL = 'https://github.com/Sachinsharmak/Habit-Tracker-App.git'
         IMAGE_NAME = 'sachin8927/habit-tracker'
-        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
     }
 
     stages {
@@ -25,22 +24,15 @@ pipeline {
 
         stage('Test') {
             steps {
-                script {
-                    // Placeholder for running tests. Adjust as needed.
-                    echo 'Running tests...'
-                    
-                    // Example test command. Replace or add your actual test commands here.
-                    sh '''
-                    echo "No tests defined, skipping..."
-                    '''
-                }
+                // Add your test steps here, e.g., running unit tests
+                echo 'Running tests...'
             }
         }
 
         stage('Push to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
                         dockerImage.push('latest')
                     }
                 }
@@ -49,19 +41,8 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                script {
-                    // Stop and remove existing containers
-                    echo 'Stopping and removing existing containers...'
-                    sh '''
-                    docker-compose -f ${DOCKER_COMPOSE_FILE} down
-                    '''
-
-                    // Start new containers with the updated image
-                    echo 'Starting new containers...'
-                    sh '''
-                    docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
-                    '''
-                }
+                // Add deployment steps, such as using Docker Compose to start services
+                echo 'Deploying application...'
             }
         }
     }
