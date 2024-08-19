@@ -24,7 +24,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Add your test steps here, e.g., running unit tests
+                // Placeholder for test steps. Add unit tests or other checks here.
                 echo 'Running tests...'
             }
         }
@@ -32,7 +32,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
                         dockerImage.push('latest')
                     }
                 }
@@ -41,7 +41,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // Add deployment steps, such as using Docker Compose to start services
+                // Deploy the application. Here, you might use Docker Compose or other deployment tools.
                 echo 'Deploying application...'
             }
         }
