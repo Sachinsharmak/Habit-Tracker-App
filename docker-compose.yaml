@@ -1,0 +1,20 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: mongodb+srv://89272sachin06:LjE1HtHHOYc5Znwi@microblog.5hnpk.mongodb.net/tracker
+      DB_NAME: tracker
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:4.4.3
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
